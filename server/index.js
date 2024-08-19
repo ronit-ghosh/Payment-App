@@ -15,8 +15,3 @@ app.use("/api/v1", mainRouter);
 app.get('/', (req, res) => {
     res.send("Hi There!")
 })
-
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port http://localhost:${PORT}`);
-});
