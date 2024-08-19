@@ -4,7 +4,7 @@ const { User, Account } = require("../models/index");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config");
 const { authMiddleware } = require("../middlewares");
-
+const bcrypt = require('bcrypt');
 const router = Router();
 
 router.post("/signup", async (req, res) => {
@@ -25,16 +25,21 @@ router.post("/signup", async (req, res) => {
         return res.status(411).json({ msg: "User Already Exists!" });
     }
 
-    const newUser = await User.create({ username, firstName, lastName, email, password });
+    bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(password, salt, async function (err, hash) {
+            const newUser = await User.create({ username, firstName, lastName, email, password: hash });
 
-    const random = Math.floor(Math.random() * 10000) + 1;
-    const newUserAccount = await Account.create({ userId: newUser._id, balance: random, firstName: newUser.firstName });
+            const random = Math.floor(Math.random() * 10000) + 1;
+            const newUserAccount = await Account.create({ userId: newUser._id, balance: random, firstName: newUser.firstName });
 
-    const token = jwt.sign({ userId: newUser._id, firstName }, JWT_SECRET);
-    res.status(200).json({
-        msg: "User Created Successfully",
-        token,
-        balance: newUserAccount.balance
+            const token = jwt.sign({ userId: newUser._id, firstName }, JWT_SECRET);
+            res.status(200).json({
+                msg: "User Created Successfully",
+                token,
+                balance: newUserAccount.balance,
+                pass: newUser.password
+            });
+        });
     });
 });
 
@@ -48,13 +53,18 @@ router.post("/signin", async (req, res) => {
         return res.status(411).json({ msg: "Inputs are Incorrect!" });
     }
 
-    const userExists = await User.findOne({ username, password });
+    const userExists = await User.findOne({ username });
     if (!userExists) {
-        return res.status(411).json({ msg: "Wrong Username or Password!" });
+        return res.status(411).json({ msg: "Wrong Username!" });
     }
 
-    const token = jwt.sign({ userId: userExists._id }, JWT_SECRET);
-    res.status(200).json({ msg: "Logged In Successfully", token });
+    bcrypt.compare(password, userExists.password, function (err, result) {
+        if (!result) {
+            res.status(411).json({ msg: "Password is Incorrect!" })
+        }
+        const token = jwt.sign({ userId: userExists._id }, JWT_SECRET);
+        res.status(200).json({ msg: "Logged In Successfully", token });
+    });
 });
 
 router.get("/bulk", authMiddleware, async (req, res) => {
