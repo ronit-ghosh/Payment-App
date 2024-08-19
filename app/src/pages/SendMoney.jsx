@@ -1,9 +1,12 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { LuSendToBack } from "react-icons/lu";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSetRecoilState } from "recoil";
+import { AuthAtom } from "../store/atom";
+import CheckSignedin from "../config/CheckSignedin";
 
 const SendMoney = () => {
     const [amount, setAmount] = useState('')
@@ -31,6 +34,15 @@ const SendMoney = () => {
             setLoading(true)
         }
     }
+
+    let isSignedin = useSetRecoilState(AuthAtom)
+    useEffect(() => {
+
+        CheckSignedin().then((res) => {
+            isSignedin(res)
+        }).catch(error => console.log(error))
+
+    }, [isSignedin])
 
     return (
         <>

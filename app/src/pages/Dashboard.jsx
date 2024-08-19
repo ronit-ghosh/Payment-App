@@ -2,6 +2,9 @@ import { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import Userlist from "../components/Userlist"
 import axios from "axios"
+import { useSetRecoilState } from "recoil"
+import { AuthAtom } from "../store/atom"
+import CheckSignedin from "../config/CheckSignedin"
 
 const Dashboard = () => {
     const [balance, setBalance] = useState(null)
@@ -21,6 +24,14 @@ const Dashboard = () => {
             })
             .catch(err => console.log(err.response.data.msg))
     }, [token])
+
+    let isSignedin = useSetRecoilState(AuthAtom)
+    useEffect(() => {
+        CheckSignedin().then((res) => {
+            isSignedin(res)
+        }).catch(error => console.log(error))
+
+    }, [isSignedin])
 
     return (
         <>

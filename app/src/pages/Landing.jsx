@@ -1,7 +1,20 @@
 import { Link } from "react-router-dom"
 import landingSvg from "../assets/landing.svg"
+import CheckSignedin from "../config/CheckSignedin"
+import { useEffect } from "react"
+import { useSetRecoilState } from "recoil"
+import { AuthAtom } from "../store/atom"
 
 const Landing = () => {
+    let isSignedin = useSetRecoilState(AuthAtom)
+    useEffect(() => {
+
+        CheckSignedin().then((res) => {
+            isSignedin(res)
+        }).catch(error => console.log(error))
+
+    }, [isSignedin])
+
     return (
         <>
             <section className="text-gray-400 bg-gray-900 body-font h-[100dvh] flex">
@@ -11,10 +24,10 @@ const Landing = () => {
                         <p className="mb-10 leading-relaxed capitalize">Manage your transactions securely and easily with our payments app, featuring real-time tracking and support for multiple payment methods.</p>
                         <div className="flex justify-center gap-5">
                             <Link to={"/signin"}>
-                            <button className="btn btn-primary btn-outline text-base px-8">Log In</button>
+                                <button className="btn btn-primary btn-outline text-base px-8">Log In</button>
                             </Link>
                             <Link to={"/signup"}>
-                            <button className="btn btn-outline text-base px-8">Sign up</button>
+                                <button className="btn btn-outline text-base px-8">Sign up</button>
                             </Link>
                         </div>
                     </div>

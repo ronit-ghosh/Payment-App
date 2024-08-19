@@ -1,8 +1,11 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSetRecoilState } from "recoil";
+import { AuthAtom } from "../store/atom";
+import CheckSignedin from "../config/CheckSignedin";
 
 const Signup = () => {
     const navigate = useNavigate()
@@ -37,6 +40,15 @@ const Signup = () => {
             setPassword('')
         }
     }
+
+    let isSignedin = useSetRecoilState(AuthAtom)
+    useEffect(() => {
+
+        CheckSignedin().then((res) => {
+            isSignedin(res)
+        }).catch(error => console.log(error))
+
+    }, [isSignedin])
 
     return (
         <>

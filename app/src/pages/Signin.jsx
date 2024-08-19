@@ -1,8 +1,11 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSetRecoilState } from "recoil";
+import { AuthAtom } from "../store/atom";
+import CheckSignedin from "../config/CheckSignedin";
 
 const Signin = () => {
     const navigate = useNavigate()
@@ -10,12 +13,14 @@ const Signin = () => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const URL = import.meta.env.VITE_REACT_APP_HOSTED_URL
+    let isSignedin = useSetRecoilState(AuthAtom)
 
     async function handleSignin() {
         setLoading(true)
         try {
             const response = await axios.post(`${URL}/api/v1/user/signin`, { username, password })
             localStorage.setItem('token', response.data.token)
+            isSignedin(true)
             navigate('/dashboard')
             toast.success("Logged In Successfully")
             setLoading(false)
@@ -28,6 +33,14 @@ const Signin = () => {
             setPassword('')
         }
     }
+
+    useEffect(() => {
+
+        CheckSignedin().then((res) => {
+            isSignedin(res)
+        }).catch(error => console.log(error))
+
+    }, [isSignedin])
 
     return (
         <>

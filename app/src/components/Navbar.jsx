@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom"
+import { useSetRecoilState } from "recoil"
+import { AuthAtom } from "../store/atom"
 
 const Navbar = () => {
     const navigate = useNavigate()
+    let isSignedin = useSetRecoilState(AuthAtom)
     function handleLogout() {
         localStorage.removeItem('token')
         navigate('/')
+        isSignedin(false)
     }
     return (
         <>
