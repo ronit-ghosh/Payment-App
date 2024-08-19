@@ -44,27 +44,31 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    try {
+        const username = req.body.username;
+        const password = req.body.password;
 
-    const parsedValues = userSignin.safeParse({ username, password });
+        const parsedValues = userSignin.safeParse({ username, password });
 
-    if (!parsedValues.success) {
-        return res.status(411).json({ msg: "Inputs are Incorrect!" });
-    }
-
-    const userExists = await User.findOne({ username });
-    if (!userExists) {
-        return res.status(411).json({ msg: "Wrong Username!" });
-    }
-
-    bcrypt.compare(password, userExists.password, function (err, result) {
-        if (!result) {
-            res.status(411).json({ msg: "Password is Incorrect!" })
+        if (!parsedValues.success) {
+            return res.status(411).json({ msg: "Inputs are Incorrect!" });
         }
-        const token = jwt.sign({ userId: userExists._id }, JWT_SECRET);
-        res.status(200).json({ msg: "Logged In Successfully", token });
-    });
+
+        const userExists = await User.findOne({ username });
+        if (!userExists) {
+            return res.status(411).json({ msg: "Wrong Username!" });
+        }
+
+        bcrypt.compare(password, userExists.password, function (err, result) {
+            if (!result) {
+                return res.status(411).json({ msg: "Password is Incorrect!" })
+            }
+            const token = jwt.sign({ userId: userExists._id }, JWT_SECRET);
+            res.status(200).json({ msg: "Logged In Successfully", token });
+        });
+    } catch (error) {
+        res.json({ error })
+    }
 });
 
 router.get("/bulk", authMiddleware, async (req, res) => {

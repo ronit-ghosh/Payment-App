@@ -3,10 +3,18 @@ const mainRouter = require("./routes/index");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["https://payments-app-rg.vercel.app/"],
+    methods: ['POST', 'GET', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/v1", mainRouter);
+
+app.get('/', (req, res) => {
+    res.send("Hi There!")
+})
 
 const PORT = 3000;
 app.listen(PORT, () => {
