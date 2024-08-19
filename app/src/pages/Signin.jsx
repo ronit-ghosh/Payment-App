@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSetRecoilState } from "recoil";
@@ -76,6 +76,7 @@ const Signin = () => {
                 <button onClick={handleSignin} className={`mt-4 btn ${loading ? 'btn-disabled' : 'btn-primary'}`}>
                     {loading ? <span className="loading loading-spinner text-blue-600"></span> : <span className="flex items-center gap-2 font-bold text-lg">Log In</span>}
                 </button>
+                <div className="text-gray-400">Don't have an account? <Link to='/signup' className="underline">Signup.</Link></div>
             </div>
         </>
     )
