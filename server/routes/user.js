@@ -28,9 +28,9 @@ router.post("/signup", async (req, res) => {
     const newUser = await User.create({ username, firstName, lastName, email, password });
 
     const random = Math.floor(Math.random() * 10000) + 1;
-    const newUserAccount = await Account.create({ userId: newUser._id, balance: random });
+    const newUserAccount = await Account.create({ userId: newUser._id, balance: random, firstName: newUser.firstName });
 
-    const token = jwt.sign({ username: newUser._id }, JWT_SECRET);
+    const token = jwt.sign({ userId: newUser._id, firstName }, JWT_SECRET);
     res.status(200).json({
         msg: "User Created Successfully",
         token,
@@ -50,26 +50,29 @@ router.post("/signin", async (req, res) => {
 
     const userExists = await User.findOne({ username, password });
     if (!userExists) {
-        return res.status(411).json({ msg: "Error Occured!" });
+        return res.status(411).json({ msg: "Wrong Username or Password!" });
     }
 
     const token = jwt.sign({ userId: userExists._id }, JWT_SECRET);
     res.status(200).json({ msg: "Logged In Successfully", token });
 });
 
-router.get("/bulk", async (req, res) => {
+router.get("/bulk", authMiddleware, async (req, res) => {
     const filter = req.query.filter || "";
+    const userId = req.userId;
 
     const users = await User.find({
-        $or: [{
-            firstName: {
-                "$regex": filter
+        $and: [
+            {
+                _id: { $ne: userId }  // Exclude the logged-in user
+            },
+            {
+                $or: [
+                    { firstName: { "$regex": filter, "$options": "i" } }, // 'i' for case-insensitive
+                    { lastName: { "$regex": filter, "$options": "i" } }
+                ]
             }
-        }, {
-            lastName: {
-                "$regex": filter
-            }
-        }]
+        ]
     });
 
     res.json({
@@ -89,7 +92,7 @@ router.put("/", authMiddleware, async (req, res) => {
             message: "Error while updating information"
         });
     }
-    // TODO: Not working idkw
+    // FIXME: Not working idkw
     await User.updateOne(req.body, {
         id: req.userId
     });
@@ -98,5 +101,9 @@ router.put("/", authMiddleware, async (req, res) => {
         message: "Updated successfully"
     });
 });
+
+router.post("/me", authMiddleware, (req, res) => {
+    res.status(200).json({ msg: "You're logged in", userId: req.userId })
+})
 
 module.exports = router;

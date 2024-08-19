@@ -52,7 +52,14 @@ const accountSchema = new mongoose.Schema({
     balance: {
         type: Number,
         required: true
-    }
+    },
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+        minLength: 3,
+        maxLength: 30
+    },
 });
 
 const Account = mongoose.model("Account", accountSchema);
