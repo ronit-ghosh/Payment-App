@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors({
     origin: ["https://payments-app-rg.vercel.app"],
-    methods: ['POST', 'GET', 'DELETE'],
+    methods: ['POST', 'GET', 'DELETE', 'PUT', 'OPTIONS'],
     credentials: true
 }));
 app.use(express.json());
