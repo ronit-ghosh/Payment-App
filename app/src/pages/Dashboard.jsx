@@ -37,8 +37,8 @@ const Dashboard = () => {
         <>
             <div className="overflow-y-auto bg-[#111827] h-[100dvh] w-full">
                 <Navbar />
-                <div className="text-gray-400 text-2xl whitespace-nowrap text-center mb-5 mt-3 capitalize">
-                    <span className="font-bold bg-clip-text text-transparent py-2 bg-gradient-to-r from-cyan-500 to-blue-500 tracking-wider">Hey! {firstName},</span> Your Balance is ₹{balance}
+                <div className="text-gray-400 sm:text-2xl text-lg whitespace-nowrap text-center mb-5 mt-3 capitalize">
+                    <span className="font-bold bg-clip-text text-transparent py-2 bg-gradient-to-r from-cyan-500 to-blue-500"><span>Hey! {firstName},</span></span> Your Balance is ₹{balance}
                 </div>
                 <Userlist />
             </div>

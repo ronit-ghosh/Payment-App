@@ -43,8 +43,8 @@ const Userlist = () => {
                 <button className="btn btn-primary"><TbListSearch fontSize={28} color="#111827" /></button>
             </div>
 
-            <div className="text-gray-500 mx-6 lg:mx-44 mt-6">
-                <table className="table text-center whitespace-nowrap">
+            <div className="text-gray-500 mx-1 lg:mx-44 mt-6">
+                <table className="table text-center">
                     <thead className="border-gray-500">
                         <tr>
                             <th>Name</th>
@@ -61,7 +61,7 @@ const Userlist = () => {
                                     <td>
                                         <button onClick={
                                             () => navigate(`/send?id=${user.userId}&name=${user.firstName + ' ' + user.lastName}`)
-                                        } className="btn btn-primary text-base font-bold">Pay <RiSendPlane2Fill fontSize={20} color="#111827" /></button>
+                                        } className="btn btn-primary text-base font-bold "> <span className="sm:block hidden">Pay</span> <RiSendPlane2Fill fontSize={20} color="#111827" /></button>
                                     </td>
                                 </tr>
                             ))
