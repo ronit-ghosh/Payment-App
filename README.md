@@ -48,6 +48,8 @@ node index.js
 5. Go to App Directory
 ```
 cd..
+```
+```
 cd app
 ```
 6. Rename the of `.env.sample` file to `.env.local` and fill the necessary fields
